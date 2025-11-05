@@ -85,8 +85,8 @@ func TestLexTokenSymbols(t *testing.T) {
 	}{
 		{"left brace", "{", TokenLeftBrace, "{"},
 		{"right brace", "}", TokenRightBrace, "}"},
-		{"left bracket", "[", TokenLeftBrace, "["},
-		{"right bracket", "]", TokenRightBrace, "]"},
+		{"left bracket", "[", TokenLeftBracket, "["},
+		{"right bracket", "]", TokenRightBracket, "]"},
 		{"comma", ",", TokenComma, ","},
 		{"colon", ":", TokenColon, ":"},
 	}

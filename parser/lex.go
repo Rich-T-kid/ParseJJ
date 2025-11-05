@@ -10,16 +10,18 @@ import (
 type TokenType int
 
 const (
-	TokenLeftBrace TokenType = iota
-	TokenRightBrace
-	TokenString
-	TokenNumber
-	TokenTrue
-	TokenFalse
-	TokenNull
-	TokenComma
-	TokenColon
-	TokenEOF
+	TokenLeftBrace    TokenType = iota // {
+	TokenRightBrace                    // }
+	TokenLeftBracket                   // [
+	TokenRightBracket                  // ]
+	TokenString                        // "text"
+	TokenNumber                        // 1423
+	TokenTrue                          // true
+	TokenFalse                         // false
+	TokenNull                          // null
+	TokenComma                         // ,
+	TokenColon                         // :
+	TokenEOF                           //
 )
 
 type Token struct {
@@ -64,9 +66,9 @@ func (l *Lexer) NextToken() (Token, error) {
 		case '}':
 			return Token{Type: TokenRightBrace, Value: "}"}, nil
 		case '[':
-			return Token{Type: TokenLeftBrace, Value: "["}, nil
+			return Token{Type: TokenLeftBracket, Value: "["}, nil
 		case ']':
-			return Token{Type: TokenRightBrace, Value: "]"}, nil
+			return Token{Type: TokenRightBracket, Value: "]"}, nil
 		case ',':
 			return Token{Type: TokenComma, Value: ","}, nil
 		case ':':
