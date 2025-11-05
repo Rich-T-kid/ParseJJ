@@ -42,16 +42,15 @@ const (
 )
 
 type Parser struct {
-	state    CURRENTSTATE
-	stack    [][]byte
-	inQuote  bool
-	inNumber bool
-	setKV    bool
+	state  CURRENTSTATE
+	stack  [][]byte
+	reader io.Reader
 }
 
-func newParser() *Parser {
+func newParser(r io.Reader) *Parser {
 	return &Parser{
-		stack: make([][]byte, 0),
+		stack:  make([][]byte, 0),
+		reader: r,
 	}
 }
 
@@ -67,57 +66,63 @@ func (p *Parser) pop() []byte {
 	p.stack = p.stack[:len(p.stack)-1]
 	return last
 }
+func (p *Parser) parse_object() map[string]any {
+	return nil
+}
+func (p *Parser) parse_array() []any {
+	return nil
+}
+func (p *Parser) parse_string() string {
+	return ""
+}
+func (p *Parser) parse_number() float64 {
+	return 0
+}
+
+// these next two can be hand coded lowkey
+func (p *Parser) parse_boolean() bool {
+	return false
+}
+func (p *Parser) parse_null() any {
+	return nil
+}
+
+// {"rich":"tmp"}
+func (p *Parser) consume() map[string]any {
+	result := make(map[string]any)
+	buffer := make([]byte, 1024)
+	for {
+		n, err := p.reader.Read(buffer)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Println("error reading:", err)
+		}
+		for i := 0; i < n; i++ {
+			switch buffer[i] {
+			case '{':
+				p.parse_object()
+			case '[':
+				p.parse_array()
+			case '"':
+				p.parse_string()
+			case 't', 'f':
+				p.parse_boolean()
+			case 'n':
+				p.parse_null()
+			case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
+				p.parse_number()
+			default:
+				// check if number
+			}
+		}
+	}
+	return result
+}
 
 // assume all elements are at the outmost layer for now
 func basicParase(data io.Reader) map[string]any {
-	result := make(map[string]any)
-	buffer := make([]byte, 1024)
-	p := newParser()
-	for {
-		n, err := data.Read(buffer)
-		if err == io.EOF {
-			return result
-		}
-		// increment our selves
-		for i := 0; i < n; i++ {
-			switch buffer[i] {
-			case byte(LEFTBRACE):
-				p.state = LEFTBRACE
-				// LEFTBRACE
-			case byte(RIGHTBRACE):
-				p.state = RIGHTBRACE
-				// RIGHTBRACE
-			case byte(QUOTE):
-				p.state = QUOTE
-				// read until next quote
-				for j := i + 1; j < n; j++ {
-					if buffer[j] == byte(QUOTE) {
-						// found end quote
-						content := append([]byte(nil), buffer[i+1:j]...)
-						if p.setKV {
-							// if this is the second part of a key:value pair write this to result
-							key := p.pop()
-							fmt.Printf("setting %s to %s", key, content)
-							result[string(key)] = string(content)
-
-							p.setKV = false
-						} else {
-							// otherwise this is a key so store it in the stack
-							p.push(content)
-						}
-						i = j // move i to j
-						break
-					}
-				}
-				// QUOTE
-			case byte(COLON):
-				p.state = COLON
-				p.setKV = true
-			case byte(COMMA):
-				p.state = COMMA
-			}
-
-		}
-	}
-
+	p := newParser(data)
+	return p.consume()
 }

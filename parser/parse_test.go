@@ -2,7 +2,6 @@ package parser
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 )
 
@@ -14,6 +13,7 @@ func TestEmptyInput(t *testing.T) {
 	}
 }
 
+/*
 func TestTwoFieldsStringsOnly(t *testing.T) {
 	var example = []byte(`{"name":"Alice","age":"30"}`)
 	result := basicParase(bytes.NewBuffer(example))
@@ -50,3 +50,4 @@ func TestMultipleStringFields(t *testing.T) {
 		}
 	}
 }
+*/

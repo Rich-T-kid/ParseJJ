@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"json-parser/parser"
 	"os"
-	"time"
+	"strings"
 )
 
 const basePath = "test_data"
@@ -23,19 +25,11 @@ func newSource(filePath string) (*source, error) {
 	return &source{F: f}, nil
 }
 func main() {
-	s, err := newSource(_exampleAlbumsPath)
-	if err != nil {
-		panic(err)
-	}
-	defer s.F.Close()
-	for {
-		buf := make([]byte, 100)
-		n, err := s.F.Read(buf)
-		if err != nil {
-			break
-		}
-		println(string(buf[:n]))
-		time.Sleep(time.Second * 2)
+
+	r := strings.NewReader(`{"name":"Bob","age":30,"active":true,"address":null}`)
+	tokens, _ := parser.GenTokens(r)
+	for i, tok := range tokens {
+		fmt.Printf("pos: %d tokens Type: %v Value: %v\n", i, tok.Type, tok.Value)
 	}
 
 }
