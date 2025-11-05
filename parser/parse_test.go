@@ -8,7 +8,7 @@ import (
 )
 
 func runParser(input string) any {
-	return basicParase(bytes.NewBufferString(input))
+	return BasicParase(bytes.NewBufferString(input))
 }
 
 // ------------------------------
@@ -16,7 +16,7 @@ func runParser(input string) any {
 // ------------------------------
 func TestEmptyInput(t *testing.T) {
 	var example = []byte(`[]`)
-	result := basicParase(bytes.NewBuffer(example))
+	result := BasicParase(bytes.NewBuffer(example))
 
 	// assert it's a slice
 	arr, ok := result.([]any)
@@ -31,7 +31,7 @@ func TestEmptyInput(t *testing.T) {
 
 func TestTwoFieldsStringsOnly(t *testing.T) {
 	var example = []byte(`{"name":"Alice","age":30}`)
-	result := basicParase(bytes.NewBuffer(example))
+	result := BasicParase(bytes.NewBuffer(example))
 
 	obj, ok := result.(map[string]any)
 	if !ok {
@@ -53,7 +53,7 @@ func TestTwoFieldsStringsOnly(t *testing.T) {
 
 func TestMultipleStringFields(t *testing.T) {
 	var example = []byte(`{"name":"Alice","city":"New York","country":"USA","occupation":"Engineer"}`)
-	result := basicParase(bytes.NewBuffer(example))
+	result := BasicParase(bytes.NewBuffer(example))
 
 	obj, ok := result.(map[string]any)
 	if !ok {
@@ -172,7 +172,7 @@ func TestNestedJSON(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := basicParase(bytes.NewBufferString(tt.input))
+			result := BasicParase(bytes.NewBufferString(tt.input))
 			if tt.name == "Nested arrays" {
 				fmt.Printf("result: %#v\n", result)
 			}

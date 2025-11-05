@@ -139,7 +139,7 @@ func (p *Parser) consume() map[string]any {
 }
 
 // assume all elements are at the outmost layer for now
-func basicParase(data io.Reader) any {
+func BasicParase(data io.Reader) any {
 	l := NewLexer(data)
 	p := newParser(l)
 	return p.parseValue()
@@ -153,7 +153,6 @@ func (p *Parser) parseValue() any {
 		return p.parse_object()
 	case TokenLeftBracket:
 		return p.parse_array()
-
 	case TokenString, TokenNumber, TokenTrue, TokenFalse, TokenNull:
 		return parseLiteral(tok)
 	default:
